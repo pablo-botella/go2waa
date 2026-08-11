@@ -1,2 +1,2 @@
 # go2waa
-Go gateway for Alaska Xbase++ Web Application Adaptor
+Go gateway compatible with Alaska Xbase++ Web Application Adaptor
