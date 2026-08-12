@@ -1,0 +1,17 @@
+{
+	"server": {
+		"host": "127.0.0.1",
+		"port": 1027,
+		"output_folder": ".",
+		"response_header_filename": "response-header.txt",
+		"response_body_filename": "response-body.html",
+		"use_process_environment": false
+	},
+	"environment": {},
+	"payload": {
+		"WAA_PACKAGE": "echo",
+		"WAA_FORM": "echo",
+		"Patata": "Valor1",
+		"multi": ["uno", "dos", "tres"]
+	}
+}

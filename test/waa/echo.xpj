@@ -1,0 +1,15 @@
+
+[PROJECT]
+    COMPILE       = xpp
+    COMPILE_FLAGS = /dll:dynamic /n /m /w /wi /wl /q
+    GUI           = yes
+    DEBUG         = no
+    LINKER        = alink
+    LINK_FLAGS    = /PM:PM
+    PROJECT.XPJ
+
+[PROJECT.XPJ]
+ echo.dll
+
+[echo.dll]
+echo.prg
