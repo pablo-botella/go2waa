@@ -6,23 +6,13 @@ import (
 	"time"
 )
 
-// WaaTargetParam is the virtual destination of a call: given the
-// conversation context it answers WHICH server to dial. A WaaTarget
-// answers itself; a WaaRouter picks by the package variable; anything
-// else may implement its own policy.
 type WaaTargetParam interface {
 	GetWaaTargetParam(ctx WaaCtx) (error, *WaaTarget)
 }
 
-// Call resolves the destination through w, dials it, runs one complete
-// conversation against ctx and closes the connection — not persistent:
-// one call, one connection, gone when the call returns.
-//
-// The second result says whether the request was dispatched to WAA at
-// all: false means nobody was dialed (e.g. the router answered
-// ErrShouldBeDispatchedElsewhere) and the request belongs outside WAA —
-// typically a package already migrated to another technology, but
-// whatever the caller decides: it should serve the request itself.
+// Call dials the WAA server, runs one complete conversation against ctx
+// and closes the connection. The connection is not persistent: one call,
+// one connection, gone when the call returns.
 func Call(w WaaTargetParam, ctx WaaCtx) (error, bool) {
 	err, t := w.GetWaaTargetParam(ctx)
 	if err != nil {
