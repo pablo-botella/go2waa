@@ -60,14 +60,59 @@ ctx.Emails [][]byte                 // raw email messages
 `Env` is a plain exported `map[string]string` (CGI names, e.g.
 `SERVER_NAME`). It does not perform the call.
 
-### WaaClient
+### WaaTarget, WaaTargetParam and Call
 
 ```go
-client := &go2waa.WaaClient{Host: "127.0.0.1", Port: 1027}
-err := client.Call(ctx)  // dial → one conversation → close
+type WaaTargetParam interface {          // the virtual destination
+    GetWaaTargetParam(ctx WaaCtx) (error, *WaaTarget)
+}
+
+target := &go2waa.WaaTarget{}
+target.Init("127.0.0.1", 1027)           // timeouts optional: conn, read, write
+err, dispatched := go2waa.Call(target, ctx) // dial → one conversation → close
 ```
 
-Defaults: 127.0.0.1, port 1024, timeouts 30/60/60 s (fields in seconds).
-Stateless config shell: safe for concurrent calls, each with its own ctx.
-`Call` is the only public entry to run a conversation — the loop itself
-(`run`) is unexported.
+- `Call(param, ctx)` resolves the destination THROUGH the param (which
+  may inspect the ctx), dials it, runs one conversation, closes. It is
+  the only public entry — the loop (`run`) stays unexported. It answers
+  `(error, dispatched)`: `dispatched == false` means nobody dialed — the
+  request is not for WAA (see the router below); serve it elsewhere.
+- `WaaTarget` is how to reach ONE server: Host/Port/timeouts (zero →
+  127.0.0.1, 1024, 30/60/60 s), plus a Name used by routers. Stateless
+  config: safe for concurrent calls, each with its own ctx. It satisfies
+  `WaaTargetParam` by returning itself.
+- Note the package's own convention on these signatures: error first.
+- Since `Call` only ever sees the interface, rolling your own
+  `WaaTargetParam` for special needs is trivial: one method deciding the
+  target (or refusing with `ErrShouldBeDispatchedElsewhere`) from
+  whatever the ctx answers — per form, per user, per time of day.
+
+### WaaRouter — multibinding and migration
+
+```go
+r := &go2waa.WaaRouter{}
+r.AddTarget("main", "10.0.0.1", 1027)     // first target = the default
+r.AddTarget("aux", "10.0.0.2", 1027)      // name "" → auto "host:port"
+r.MapPackageToTarget("almacen", "aux")    // this package goes to aux
+r.MapPackageToTarget("ventas", "!")       // "!": already migrated — not WAA's
+err, dispatched := go2waa.Call(r, ctx)    // picks by the route variable
+```
+
+- Unmapped packages go to the default target (zero value: the FIRST one
+  added; `SetDefaultTarget(name)` changes it, `SetDefaultTarget("!")`
+  means no default at all).
+- `"!"` (or no default) answers `ErrShouldBeDispatchedElsewhere` with
+  `dispatched == false` — elsewhere being anything that is NOT WAA; the
+  caller's catch serves it its own way. The typical use is the MIGRATION
+  lever: an Xbase++/WAA program made of several packages moves to Go one
+  package at a time — as each replacement lands, its package is mapped
+  to `"!"`; WAA keeps serving the rest, and nobody notices the seam.
+- The package variable defaults to `WAA_PACKAGE`; `SetPackageVarName(name)`
+  changes it (and `""` resets to the default) — usually you migrate
+  package by package, but inside one package another variable may play
+  the pivot (form by form, whatever the app calls for).
+- Target names match case-insensitively; package values match exactly.
+- The sentinels live in `error.go`: `ErrShouldBeDispatchedElsewhere`,
+  `ErrTargetNameNotFound`, `ErrTargetNameAlreadyExists`,
+  `ErrInvalidTargetName`, `ErrTargetIndexOutOfRange`,
+  `ErrNoWaaTargetConfigured`.

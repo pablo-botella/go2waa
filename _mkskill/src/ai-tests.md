@@ -12,10 +12,10 @@ exercises the module strictly through the public API (`run` stays
 unexported).
 
 - `go2waa_test.go` — `TestProtocol` (framing over `net.Pipe`),
-  `TestCallVirtual` and `TestCallNak` (`WaaClient.Call` against a
-  scripted mock WAA server on a loopback port; the `script` helper turns
-  any mismatch into a closed connection, which fails the `Call`). The
-  `virtualContext` there is the reference in-memory `WaaCtx`
+  `TestCallVirtual` and `TestCallNak` (`go2waa.Call` with a `WaaTarget`
+  against a scripted mock WAA server on a loopback port; the `script`
+  helper turns any mismatch into a closed connection, which fails the
+  call). The `virtualContext` there is the reference in-memory `WaaCtx`
   implementation, embedding `NullWaaCtx`.
 - `waa_call_test.go` — `TestWaaCall`: one real call against a live WAA
   server, driven by `test/test.json` (the Go flavor of the Xbase

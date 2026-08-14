@@ -7,8 +7,15 @@ mkskill:
 ## Semantics that matter
 
 - **One connection per call.** The protocol is not persistent: CONNECT →
-  READY → commands → DISCONNECT, socket closed. `WaaClient` holds no live
+  READY → commands → DISCONNECT, socket closed. `WaaTarget` holds no live
   state; a live `DirectWaaCtx` belongs to exactly one call.
+- **The destination is virtual** (`WaaTargetParam`): a `WaaTarget` is one
+  server, a `WaaRouter` picks one by the package variable (`WAA_PACKAGE`
+  by default) — and a package mapped to `"!"` is served elsewhere:
+  anything that is not WAA. `Call` answers
+  `(ErrShouldBeDispatchedElsewhere, false)` and the caller serves it its
+  own way — typically the migration case: package by package to Go, WAA
+  serving the rest, no seams visible.
 - **Var matching is case-insensitive, presentation keeps the original
   case.** `DirectWaaCtx` groups by UPPERCASE key; each `KvEntry` keeps the
   name case of its first appearance. `OnGetAllVars` returns entries sorted

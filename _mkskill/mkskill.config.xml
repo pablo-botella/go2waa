@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mkskill>
   <version-spec params="major:byte,minor:[0-99],build:word">
-    <version major="0" minor="1" build="0" lock="major">
+    <version major="0" minor="1" build="1" lock="major">
       <ts></ts>
     </version>
     <label key="title" volatile="true" default-to-ts="true"></label>
@@ -22,7 +22,7 @@ exit /b 1
     <meta>
       <module>github.com/pablo-botella/go2waa</module>
       <license>MIT</license>
-      <description>Go core for the Alaska Xbase++ WAA gateway protocol — a fully virtual conversation context (WaaCtx), an in-memory DirectWaaCtx and a WaaClient that call a WAA server straight from Go code, no web server in between. Use when working with github.com/pablo-botella/go2waa, WAA1GATE-style gateways or Xbase++ Web Application Adaptor backends.</description>
+      <description>Go core for the Alaska Xbase++ WAA gateway protocol — a fully virtual conversation context (WaaCtx), an in-memory DirectWaaCtx, and Call over a virtual destination (WaaTarget, or WaaRouter multibinding by WAA_PACKAGE with a "!" migration lever) reaching a WAA server straight from Go code, no web server in between. Use when working with github.com/pablo-botella/go2waa, WAA1GATE-style gateways or Xbase++ Web Application Adaptor backends.</description>
     </meta>
   </project>
   <version-history max="10"></version-history>

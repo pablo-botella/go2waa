@@ -281,8 +281,10 @@ func TestCallVirtual(t *testing.T) {
 		s.expect(go2waa.CmdAck, "")
 	})
 
-	client := &go2waa.WaaClient{Host: "127.0.0.1", Port: mock.port}
-	if err := client.Call(ctx); err != nil {
+	target := &go2waa.WaaTarget{}
+	target.Init("127.0.0.1", mock.port)
+	tp := go2waa.WaaTargetParam(target) // interface conversion
+	if err, _ := go2waa.Call(tp, ctx); err != nil {
 		t.Fatalf("Call error: %v", err)
 	}
 
@@ -348,8 +350,10 @@ func TestCallNak(t *testing.T) {
 		s.expect(go2waa.CmdAck, "")
 	})
 
-	client := &go2waa.WaaClient{Host: "127.0.0.1", Port: mock.port}
-	if err := client.Call(ctx); err != nil {
+	target := &go2waa.WaaTarget{}
+	target.Init("127.0.0.1", mock.port)
+	tp := go2waa.WaaTargetParam(target) // interface conversion
+	if err, _ := go2waa.Call(tp, ctx); err != nil {
 		t.Fatalf("Call error: %v", err)
 	}
 
