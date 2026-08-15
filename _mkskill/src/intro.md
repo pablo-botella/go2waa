@@ -7,8 +7,8 @@ mkskill:
 # go2waa
 
 Go core for the Alaska Xbase++ WAA gateway protocol: hold one complete
-conversation with a WAA server — the backend behind `WAA1GATE.EXE` — from
-any Go code, with or without a web server in between.
+conversation with a WAA server from any Go code, with or without a 
+web server in between.
 
 The wire framing, the conversation flow and the CGI output handling are
 compatible with Alaska's WAA gateway. The surface

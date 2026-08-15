@@ -6,6 +6,21 @@ WAA server (the backend behind `WAA1GATE.EXE`) from plain Go code — no
 web server required. Wire-compatible with Alaska's C gateway (1998-2003);
 fully virtual on the surface.
 
+The deployment picture — classic, and where this package sits:
+
+```
+classic:  browser → web server → CGI gateway → WAA server
+                                                └─ application packages
+
+now:      browser → web server → Go application + go2waa → WAA server
+          Go application (a service, a CLI, a test) → go2waa → WAA server
+```
+
+go2waa takes the gateway's seat; the frequent shapes are a web server
+fronting a Go application, or the Go application on its own. Note the
+two "applications" in play: the Xbase++ one living in the WAA server
+(the one the conversation serves) and the Go one using this package.
+
 Layout — one file per piece:
 
 ```
@@ -167,8 +182,8 @@ err, dispatched := go2waa.Call(r, ctx)    // picks by the route variable
 - **The terminator ints are the bytes**: `EolCrLf == 0x0D0A`. They come
   from linereader's `EolType`.
 - **Byte transparency.** No charset handling anywhere: bytes in, bytes
-  out, like every original gateway (CGI, ISAPI). Legacy apps typically
-  live in CP1252 and declare it in their Content-Type header; encoding
+  out. Whatever codepage the application lives in travels untouched
+  (apps declare theirs in their Content-Type header); encoding
   conversion, if ever needed, belongs to the caller.
 - **Email is an opaque `[]byte`** (de facto RFC 822: `From:` first, one
   or more `To:`, CRLF endings — but the package does not parse it).

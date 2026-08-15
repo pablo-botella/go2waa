@@ -32,8 +32,8 @@ mkskill:
 - **The terminator ints are the bytes**: `EolCrLf == 0x0D0A`. They come
   from linereader's `EolType`.
 - **Byte transparency.** No charset handling anywhere: bytes in, bytes
-  out, like every original gateway (CGI, ISAPI). Legacy apps typically
-  live in CP1252 and declare it in their Content-Type header; encoding
+  out. Whatever codepage the application lives in travels untouched
+  (apps declare theirs in their Content-Type header); encoding
   conversion, if ever needed, belongs to the caller.
 - **Email is an opaque `[]byte`** (de facto RFC 822: `From:` first, one
   or more `To:`, CRLF endings — but the package does not parse it).

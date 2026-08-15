@@ -12,6 +12,21 @@ WAA server (the backend behind `WAA1GATE.EXE`) from plain Go code — no
 web server required. Wire-compatible with Alaska's C gateway (1998-2003);
 fully virtual on the surface.
 
+The deployment picture — classic, and where this package sits:
+
+```
+classic:  browser → web server → CGI gateway → WAA server
+                                                └─ application packages
+
+now:      browser → web server → Go application + go2waa → WAA server
+          Go application (a service, a CLI, a test) → go2waa → WAA server
+```
+
+go2waa takes the gateway's seat; the frequent shapes are a web server
+fronting a Go application, or the Go application on its own. Note the
+two "applications" in play: the Xbase++ one living in the WAA server
+(the one the conversation serves) and the Go one using this package.
+
 Layout — one file per piece:
 
 ```
